@@ -1,1 +1,3 @@
-https://sitaram1827.github.io/imagestagnography/
+website link : https://sitaram1827.github.io/imagestagnography/
+
+This project was also developed collaboratively by my team member (tharun).
