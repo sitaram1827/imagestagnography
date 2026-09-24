@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Secure Image Steganography</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #0d1117;
+        color: #101820;
+        min-height: 100vh;
+    }
+
+    button,
+    input,
+    textarea {
+        font-family: inherit;
+    }
+
+    /* ================= HOME ================= */
+
+    .home {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 30px;
+    }
+
+    .home-card {
+        width: 100%;
+        max-width: 720px;
+        text-align: center;
+        padding: 55px 35px;
+    }
+
+    .logo {
+        width: 82px;
+        height: 82px;
+        margin: 0 auto 25px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, #1f6feb, #238636);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 38px;
+        box-shadow: 0 15px 40px rgba(0,0,0,.35);
+    }
+
+    .home-title {
+        color: white;
+        font-size: 42px;
+        font-weight: 800;
+        letter-spacing: 1px;
+        line-height: 1.15;
+    }
+
+    .home-subtitle {
+        color: #b8c6d1;
+        margin-top: 15px;
+        font-size: 17px;
+    }
+
+    .home-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        max-width: 430px;
+        margin: 45px auto 0;
+    }
+
+    .main-btn {
+        border: none;
+        border-radius: 12px;
+        padding: 17px 20px;
+        color: white;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: .25s;
+    }
+
+    .main-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0,0,0,.25);
+    }
+
+    .encrypt-btn {
+        background: #1f6feb;
+    }
+
+    .encrypt-btn:hover {
+        background: #388bfd;
+    }
+
+    .decrypt-btn {
+        background: #238636;
+    }
+
+    .decrypt-btn:hover {
+        background: #2ea043;
+    }
+
+    .exit-btn {
+        background: #21262d;
+        margin-top: 5px;
+    }
+
+    .footer {
+        color: #7d8590;
+        margin-top: 50px;
+        font-size: 13px;
+    }
+
+    /* ================= APP ================= */
+
+    .app {
+        display: none;
+        min-height: 100vh;
+        background: #f4f6f8;
+        padding: 30px 15px 50px;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 850px;
+        margin: auto;
+    }
+
+    .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .back-btn {
+        border: none;
+        background: #334155;
+        color: white;
+        padding: 10px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .back-btn:hover {
+        background: #1e293b;
+    }
+
+    .app-title {
+        text-align: center;
+        font-size: 30px;
+        color: #101820;
+        font-weight: 800;
+    }
+
+    .app-subtitle {
+        text-align: center;
+        color: #5b6572;
+        margin-top: 7px;
+        margin-bottom: 25px;
+    }
+
+    .section {
+        background: white;
+        border: 1px solid #d7dce1;
+        border-radius: 14px;
+        padding: 22px;
+        margin-bottom: 18px;
+        box-shadow: 0 5px 18px rgba(0,0,0,.04);
+    }
+
+    .section-title {
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #101820;
+    }
+
+    .file-row {
+        display: flex;
+        gap: 10px;
+    }
+
+    .file-input {
+        flex: 1;
+        min-width: 0;
+        background: #f8fafc;
+        border: 1px solid #d7dce1;
+        border-radius: 8px;
+        padding: 12px;
+        color: #5b6572;
+    }
+
+    .browse-label {
+        background: #1f6feb;
+        color: white;
+        border-radius: 8px;
+        padding: 12px 18px;
+        cursor: pointer;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .browse-label:hover {
+        background: #388bfd;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    textarea,
+    input[type="text"] {
+        width: 100%;
+        border: 1px solid #d7dce1;
+        border-radius: 9px;
+        padding: 13px;
+        outline: none;
+        font-size: 15px;
+        background: #fff;
+    }
+
+    textarea {
+        min-height: 150px;
+        resize: vertical;
+    }
+
+    textarea:focus,
+    input[type="text"]:focus {
+        border-color: #1f6feb;
+        box-shadow: 0 0 0 3px rgba(31,111,235,.1);
+    }
+
+    .preview {
+        margin-top: 18px;
+        background: #e9edf1;
+        border: 1px dashed #c7ced6;
+        min-height: 220px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .preview img {
+        max-width: 100%;
+        max-height: 350px;
+        display: block;
+    }
+
+    .preview-empty {
+        color: #5b6572;
+        font-size: 14px;
+        text-align: center;
+        padding: 30px;
+    }
+
+    .image-info {
+        color: #5b6572;
+        font-size: 13px;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .action {
+        width: 100%;
+        border: none;
+        color: white;
+        padding: 16px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 700;
+        transition: .2s;
+    }
+
+    .action:hover {
+        transform: translateY(-1px);
+    }
+
+    .action-blue {
+        background: #1f6feb;
+    }
+
+    .action-blue:hover {
+        background: #388bfd;
+    }
+
+    .action-green {
+        background: #238636;
+    }
+
+    .action-green:hover {
+        background: #2ea043;
+    }
+
+    .status {
+        text-align: center;
+        margin-top: 12px;
+        min-height: 20px;
+        font-size: 14px;
+        color: #5b6572;
+    }
+
+    .key-box {
+        display: flex;
+        gap: 10px;
+    }
+
+    .key-box input {
+        flex: 1;
+    }
+
+    .small-btn {
+        border: none;
+        background: #64748b;
+        color: white;
+        padding: 0 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .small-btn:hover {
+        background: #475569;
+    }
+
+    .key-warning {
+        background: #fff7ed;
+        color: #9a3412;
+        border: 1px solid #fed7aa;
+        border-radius: 9px;
+        padding: 12px;
+        margin-top: 12px;
+        font-size: 13px;
+    }
+
+    .success-box {
+        background: #f0fdf4;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+        border-radius: 9px;
+        padding: 14px;
+        margin-top: 12px;
+        line-height: 1.6;
+        display: none;
+    }
+
+    .error {
+        color: #b42318 !important;
+    }
+
+    .success {
+        color: #238636 !important;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    .copy-btn {
+        margin-top: 10px;
+        background: #334155;
+        border: none;
+        color: white;
+        padding: 10px 16px;
+        border-radius: 7px;
+        cursor: pointer;
+    }
+
+    .copy-btn:hover {
+        background: #1e293b;
+    }
+
+    @media (max-width: 650px) {
+
+        .home-title {
+            font-size: 31px;
+        }
+
+        .home-card {
+            padding: 35px 10px;
+        }
+
+        .file-row,
+        .key-box {
+            flex-direction: column;
+        }
+
+        .browse-label,
+        .small-btn {
+            text-align: center;
+            padding: 12px;
+        }
+
+        .app-title {
+            font-size: 25px;
+        }
+
+        .topbar {
+            gap: 10px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<!-- ========================================================= -->
+<!-- HOME -->
+<!-- ========================================================= -->
+
+<div class="home" id="home">
+
+    <div class="home-card">
+
+        <div class="logo">🔐</div>
+
+        <div class="home-title">
+            SECURE IMAGE<br>
+            STEGANOGRAPHY
+        </div>
+
+        <div class="home-subtitle">
+            Hide encrypted messages inside images
+        </div>
+
+        <div class="home-buttons">
+
+            <button
+                class="main-btn encrypt-btn"
+                onclick="showEncrypt()">
+                🔐 Encrypt / Hide Message
+            </button>
+
+            <button
+                class="main-btn decrypt-btn"
+                onclick="showDecrypt()">
+                🔓 Decrypt / Extract Message
+            </button>
+
+            <button
+                class="main-btn exit-btn"
+                onclick="exitApp()">
+                Exit
+            </button>
+
+        </div>
+
+        <div class="footer">
+            AES-GCM Encryption + LSB Steganography
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- ENCRYPT PAGE -->
+<!-- ========================================================= -->
+
+<div class="app" id="encryptPage">
+
+<div class="container">
+
+    <div class="topbar">
+
+        <button class="back-btn" onclick="goHome()">
+            ← Back
+        </button>
+
+    </div>
+
+    <div class="app-title">
+        🔐 Encrypt & Hide Message
+    </div>
+
+    <div class="app-subtitle">
+        Encrypt your message and hide it inside an image
+    </div>
+
+
+    <!-- IMAGE -->
+
+    <div class="section">
+
+        <div class="section-title">
+            1. Select Image
+        </div>
+
+        <div class="file-row">
+
+            <input
+                type="text"
+                id="encryptFileName"
+                class="file-input"
+                placeholder="Choose an image..."
+                readonly>
+
+            <label class="browse-label">
+                Browse
+                <input
+                    type="file"
+                    id="encryptImage"
+                    accept="image/png,image/jpeg">
+            </label>
+
+        </div>
+
+        <div class="preview" id="encryptPreview">
+            <div class="preview-empty">
+                No image selected
+            </div>
+        </div>
+
+        <div class="image-info" id="encryptImageInfo"></div>
+
+    </div>
+
+
+    <!-- MESSAGE -->
+
+    <div class="section">
+
+        <div class="section-title">
+            2. Enter Secret Message
+        </div>
+
+        <textarea
+            id="secretMessage"
+            placeholder="Type your secret message here..."></textarea>
+
+    </div>
+
+
+    <!-- ACTION -->
+
+    <div class="section">
+
+        <button
+            class="action action-blue"
+            onclick="encryptMessage()">
+
+            🔐 ENCRYPT & HIDE MESSAGE
+
+        </button>
+
+        <div class="status" id="encryptStatus">
+            Ready — choose an image and enter a message
+        </div>
+
+    </div>
+
+
+    <!-- OUTPUT -->
+
+    <div class="section">
+
+        <div class="section-title">
+            3. Encoded Output Image
+        </div>
+
+        <div class="preview" id="outputPreview">
+            <div class="preview-empty">
+                Encoded image will appear here
+            </div>
+        </div>
+
+        <div class="image-info" id="outputInfo"></div>
+
+        <div
+            class="success-box"
+            id="encryptSuccess">
+
+            <strong>Encryption successful!</strong>
+            <br><br>
+
+            Your encoded image is ready.
+            <br>
+            Save the encryption key safely.
+
+            <br><br>
+
+            <button
+                class="copy-btn"
+                onclick="downloadKey()">
+
+                💾 Download Encryption Key
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- DECRYPT PAGE -->
+<!-- ========================================================= -->
+
+<div class="app" id="decryptPage">
+
+<div class="container">
+
+    <div class="topbar">
+
+        <button class="back-btn" onclick="goHome()">
+            ← Back
+        </button>
+
+    </div>
+
+    <div class="app-title">
+        🔓 Decrypt & Extract Message
+    </div>
+
+    <div class="app-subtitle">
+        Extract and decrypt the hidden message
+    </div>
+
+
+    <!-- IMAGE -->
+
+    <div class="section">
+
+        <div class="section-title">
+            1. Select Encoded PNG Image
+        </div>
+
+        <div class="file-row">
+
+            <input
+                type="text"
+                id="decryptFileName"
+                class="file-input"
+                placeholder="Choose encoded PNG..."
+                readonly>
+
+            <label class="browse-label">
+                Browse
+                <input
+                    type="file"
+                    id="decryptImage"
+                    accept="image/png">
+            </label>
+
+        </div>
+
+        <div class="preview" id="decryptPreview">
+            <div class="preview-empty">
+                No image selected
+            </div>
+        </div>
+
+        <div class="image-info" id="decryptImageInfo"></div>
+
+    </div>
+
+
+    <!-- KEY -->
+
+    <div class="section">
+
+        <div class="section-title">
+            2. Enter Encryption Key
+        </div>
+
+        <div class="key-box">
+
+            <input
+                type="text"
+                id="encryptionKey"
+                placeholder="Paste encryption key here...">
+
+            <button
+                class="small-btn"
+                onclick="document.getElementById('keyFile').click()">
+
+                Load Key
+
+            </button>
+
+            <input
+                type="file"
+                id="keyFile"
+                accept=".txt"
+                style="display:none">
+
+        </div>
+
+        <div class="key-warning">
+            ⚠️ The encryption key is required to decrypt the hidden message.
+        </div>
+
+    </div>
+
+
+    <!-- ACTION -->
+
+    <div class="section">
+
+        <button
+            class="action action-green"
+            onclick="decryptMessage()">
+
+            🔓 EXTRACT & DECRYPT MESSAGE
+
+        </button>
+
+        <div class="status" id="decryptStatus">
+            Ready — select the encoded image and enter its key
+        </div>
+
+    </div>
+
+
+    <!-- RESULT -->
+
+    <div class="section">
+
+        <div class="section-title">
+            3. Decrypted Message
+        </div>
+
+        <textarea
+            id="decryptedMessage"
+            placeholder="Decrypted message will appear here..."
+            readonly></textarea>
+
+        <button
+            class="copy-btn"
+            onclick="copyMessage()">
+
+            📋 Copy Message
+
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* ============================================================
+   GLOBAL VARIABLES
+============================================================ */
+
+let generatedKey = null;
+let encodedImageBlob = null;
+
+
+/* ============================================================
+   PAGE NAVIGATION
+============================================================ */
+
+function showEncrypt() {
+
+    document.getElementById("home").style.display = "none";
+    document.getElementById("decryptPage").style.display = "none";
+
+    document.getElementById("encryptPage").style.display = "block";
+
+    window.scrollTo(0, 0);
+}
+
+
+function showDecrypt() {
+
+    document.getElementById("home").style.display = "none";
+    document.getElementById("encryptPage").style.display = "none";
+
+    document.getElementById("decryptPage").style.display = "block";
+
+    window.scrollTo(0, 0);
+}
+
+
+function goHome() {
+
+    document.getElementById("encryptPage").style.display = "none";
+    document.getElementById("decryptPage").style.display = "none";
+
+    document.getElementById("home").style.display = "flex";
+
+    window.scrollTo(0, 0);
+}
+
+
+function exitApp() {
+
+    window.close();
+
+    setTimeout(() => {
+
+        alert(
+            "For security reasons, browsers may not allow a webpage to close itself. You can close this browser tab manually."
+        );
+
+    }, 200);
+
+}
+
+
+/* ============================================================
+   IMAGE PREVIEW
+============================================================ */
+
+document
+.getElementById("encryptImage")
+.addEventListener("change", function() {
+
+    const file = this.files[0];
+
+    if (!file) return;
+
+    document.getElementById("encryptFileName").value =
+        file.name;
+
+    showImagePreview(
+        file,
+        "encryptPreview",
+        "encryptImageInfo"
+    );
+
+});
+
+
+document
+.getElementById("decryptImage")
+.addEventListener("change", function() {
+
+    const file = this.files[0];
+
+    if (!file) return;
+
+    document.getElementById("decryptFileName").value =
+        file.name;
+
+    showImagePreview(
+        file,
+        "decryptPreview",
+        "decryptImageInfo"
+    );
+
+});
+
+
+function showImagePreview(file, previewId, infoId) {
+
+    const preview =
+        document.getElementById(previewId);
+
+    const info =
+        document.getElementById(infoId);
+
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+
+        preview.innerHTML =
+            `<img src="${e.target.result}" alt="Preview">`;
+
+    };
+
+    reader.readAsDataURL(file);
+
+    const image = new Image();
+
+    image.onload = function() {
+
+        const sizeKB =
+            (file.size / 1024).toFixed(1);
+
+        info.textContent =
+            `${file.name} • ${image.width}×${image.height}px • ${sizeKB} KB`;
+
+        URL.revokeObjectURL(image.src);
+
+    };
+
+    image.onerror = function() {
+        URL.revokeObjectURL(image.src);
+        info.textContent = "Could not read this image.";
+    };
+
+    image.src =
+        URL.createObjectURL(file);
+}
+
+
+/* ============================================================
+   AES-GCM ENCRYPTION
+============================================================ */
+
+async function generateAESKey() {
+
+    return await crypto.subtle.generateKey(
+        {
+            name: "AES-GCM",
+            length: 256
+        },
+        true,
+        ["encrypt", "decrypt"]
+    );
+
+}
+
+
+async function exportAESKey(key) {
+
+    const raw =
+        await crypto.subtle.exportKey(
+            "raw",
+            key
+        );
+
+    return bytesToBase64(
+        new Uint8Array(raw)
+    );
+
+}
+
+
+async function importAESKey(base64Key) {
+
+    const bytes =
+        base64ToBytes(base64Key);
+
+    if (bytes.length !== 32) {
+        throw new Error("The encryption key must be a valid AES-256 key.");
+    }
+
+    return await crypto.subtle.importKey(
+        "raw",
+        bytes,
+        {
+            name: "AES-GCM"
+        },
+        false,
+        ["decrypt"]
+    );
+
+}
+
+
+async function encryptText(text, key) {
+
+    const encoder =
+        new TextEncoder();
+
+    const data =
+        encoder.encode(text);
+
+    const iv =
+        crypto.getRandomValues(
+            new Uint8Array(12)
+        );
+
+    const encrypted =
+        await crypto.subtle.encrypt(
+            {
+                name: "AES-GCM",
+                iv: iv
+            },
+            key,
+            data
+        );
+
+    const result =
+        new Uint8Array(
+            iv.length + encrypted.byteLength
+        );
+
+    result.set(iv, 0);
+
+    result.set(
+        new Uint8Array(encrypted),
+        iv.length
+    );
+
+    return result;
+
+}
+
+
+async function decryptText(data, key) {
+
+    const iv =
+        data.slice(0, 12);
+
+    const encrypted =
+        data.slice(12);
+
+    const decrypted =
+        await crypto.subtle.decrypt(
+            {
+                name: "AES-GCM",
+                iv: iv
+            },
+            key,
+            encrypted
+        );
+
+    return new TextDecoder().decode(
+        decrypted
+    );
+
+}
+
+
+/* ============================================================
+   BASE64
+============================================================ */
+
+function bytesToBase64(bytes) {
+
+    let binary = "";
+
+    const chunkSize = 0x8000;
+
+    for (
+        let i = 0;
+        i < bytes.length;
+        i += chunkSize
+    ) {
+
+        binary += String.fromCharCode(
+            ...bytes.subarray(
+                i,
+                Math.min(
+                    i + chunkSize,
+                    bytes.length
+                )
+            )
+        );
+
+    }
+
+    return btoa(binary);
+
+}
+
+
+function base64ToBytes(base64) {
+
+    const binary =
+        atob(base64);
+
+    const bytes =
+        new Uint8Array(
+            binary.length
+        );
+
+    for (
+        let i = 0;
+        i < binary.length;
+        i++
+    ) {
+
+        bytes[i] =
+            binary.charCodeAt(i);
+
+    }
+
+    return bytes;
+
+}
+
+
+/* ============================================================
+   INTEGER → 4 BYTES
+============================================================ */
+
+function numberToBytes(number) {
+
+    return new Uint8Array([
+        (number >>> 24) & 255,
+        (number >>> 16) & 255,
+        (number >>> 8) & 255,
+        number & 255
+    ]);
+
+}
+
+
+function bytesToNumber(bytes) {
+
+    return (
+        ((bytes[0] << 24) >>> 0) +
+        (bytes[1] << 16) +
+        (bytes[2] << 8) +
+        bytes[3]
+    );
+
+}
+
+
+/* ============================================================
+   LSB STEGANOGRAPHY
+============================================================ */
+
+function embedData(imageData, data) {
+
+    const pixels =
+        imageData.data;
+
+    const requiredBits =
+        data.length * 8;
+
+    const availableBits =
+        pixels.length;
+
+    if (
+        requiredBits >
+        availableBits
+    ) {
+
+        throw new Error(
+            `Message is too large for this image.\n\n` +
+            `Required bits: ${requiredBits}\n` +
+            `Available bits: ${availableBits}\n\n` +
+            `Please select a larger image or use a shorter message.`
+        );
+
+    }
+
+
+    let bitIndex = 0;
+
+
+    for (
+        let i = 0;
+        i < pixels.length &&
+        bitIndex < requiredBits;
+        i++
+    ) {
+
+        /*
+         * Skip Alpha channel.
+         * RGBA = R G B A
+         */
+
+        if (
+            (i + 1) % 4 === 0
+        ) {
+
+            continue;
+
+        }
+
+
+        const byteIndex =
+            Math.floor(
+                bitIndex / 8
+            );
+
+        const bitPosition =
+            7 -
+            (bitIndex % 8);
+
+        const bit =
+            (
+                data[byteIndex] >>
+                bitPosition
+            ) & 1;
+
+
+        pixels[i] =
+            (
+                pixels[i] & 0xFE
+            ) | bit;
+
+
+        bitIndex++;
+
+    }
+
+
+    return imageData;
+
+}
+
+
+/* ============================================================
+   EXTRACT LSB DATA
+============================================================ */
+
+function extractBits(imageData, numberOfBytes) {
+
+    const pixels =
+        imageData.data;
+
+    const totalBits =
+        numberOfBytes * 8;
+
+    const output =
+        new Uint8Array(
+            numberOfBytes
+        );
+
+    let bitIndex = 0;
+
+
+    for (
+        let i = 0;
+        i < pixels.length &&
+        bitIndex < totalBits;
+        i++
+    ) {
+
+        /*
+         * Skip alpha channel
+         */
+
+        if (
+            (i + 1) % 4 === 0
+        ) {
+
+            continue;
+
+        }
+
+
+        const bit =
+            pixels[i] & 1;
+
+
+        const byteIndex =
+            Math.floor(
+                bitIndex / 8
+            );
+
+        const bitPosition =
+            7 -
+            (bitIndex % 8);
+
+
+        output[byteIndex] |=
+            bit << bitPosition;
+
+
+        bitIndex++;
+
+    }
+
+
+    if (
+        bitIndex <
+        totalBits
+    ) {
+
+        throw new Error(
+            "Image does not contain enough hidden data."
+        );
+
+    }
+
+
+    return output;
+
+}
+
+
+/* ============================================================
+   CREATE IMAGE DATA FROM FILE
+============================================================ */
+
+async function loadImageData(file) {
+
+    const bitmap =
+        await createImageBitmap(file);
+
+    const canvas =
+        document.createElement("canvas");
+
+    canvas.width =
+        bitmap.width;
+
+    canvas.height =
+        bitmap.height;
+
+    const ctx =
+        canvas.getContext("2d", {
+            willReadFrequently: true
+        });
+
+    if (!ctx) {
+        throw new Error("This browser could not create a canvas for the image.");
+    }
+
+    ctx.drawImage(
+        bitmap,
+        0,
+        0
+    );
+
+    const imageData =
+        ctx.getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+    return {
+        imageData,
+        canvas,
+        width: canvas.width,
+        height: canvas.height
+    };
+
+}
+
+
+/* ============================================================
+   ENCRYPT + HIDE
+============================================================ */
+
+async function encryptMessage() {
+
+    const file =
+        document.getElementById(
+            "encryptImage"
+        ).files[0];
+
+
+    const message =
+        document.getElementById(
+            "secretMessage"
+        ).value;
+
+
+    const status =
+        document.getElementById(
+            "encryptStatus"
+        );
+
+
+    const success =
+        document.getElementById(
+            "encryptSuccess"
+        );
+
+
+    success.style.display =
+        "none";
+
+
+    if (!file) {
+
+        setStatus(
+            status,
+            "Please select an image.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (!message.trim()) {
+
+        setStatus(
+            status,
+            "Please enter a secret message.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        setStatus(
+            status,
+            "Encrypting message...",
+            ""
+        );
+
+
+        /*
+         * Generate AES-256 key
+         */
+
+        const key =
+            await generateAESKey();
+
+
+        generatedKey =
+            await exportAESKey(key);
+
+
+        /*
+         * Encrypt message
+         */
+
+        const encrypted =
+            await encryptText(
+                message,
+                key
+            );
+
+
+        /*
+         * Data structure:
+         *
+         * 4 bytes
+         * MAGIC HEADER
+         *
+         * 4 bytes
+         * encrypted data length
+         *
+         * encrypted data
+         */
+
+
+        const magic =
+            new TextEncoder().encode(
+                "STEG"
+            );
+
+
+        const length =
+            numberToBytes(
+                encrypted.length
+            );
+
+
+        const data =
+            new Uint8Array(
+                magic.length +
+                length.length +
+                encrypted.length
+            );
+
+
+        data.set(
+            magic,
+            0
+        );
+
+
+        data.set(
+            length,
+            4
+        );
+
+
+        data.set(
+            encrypted,
+            8
+        );
+
+
+        /*
+         * Load image
+         */
+
+        const image =
+            await loadImageData(file);
+
+
+        const availableBits =
+            image.imageData.data.length *
+            0.75;
+
+
+        if (
+            data.length * 8 >
+            availableBits
+        ) {
+
+            throw new Error(
+                "Message is too large for this image. Please use a larger image."
+            );
+
+        }
+
+
+        /*
+         * Hide data
+         */
+
+        embedData(
+            image.imageData,
+            data
+        );
+
+
+        /*
+         * Create PNG
+         */
+
+        const ctx =
+            image.canvas.getContext(
+                "2d"
+            );
+
+
+        ctx.putImageData(
+            image.imageData,
+            0,
+            0
+        );
+
+
+        const blob =
+            await new Promise(
+                resolve =>
+                    image.canvas.toBlob(
+                        resolve,
+                        "image/png"
+                    )
+            );
+
+        if (!blob) {
+            throw new Error("The encoded PNG could not be created.");
+        }
+
+
+        encodedImageBlob =
+            blob;
+
+
+        /*
+         * Preview
+         */
+
+        const outputUrl =
+            URL.createObjectURL(blob);
+
+
+        document.getElementById(
+            "outputPreview"
+        ).innerHTML =
+            `<img src="${outputUrl}" alt="Encoded image">`;
+
+
+        const sizeKB =
+            (
+                blob.size / 1024
+            ).toFixed(1);
+
+
+        document.getElementById(
+            "outputInfo"
+        ).textContent =
+            `Encoded PNG • ${image.width}×${image.height}px • ${sizeKB} KB`;
+
+
+        /*
+         * Status
+         */
+
+        setStatus(
+            status,
+            "Done — encoded image created successfully.",
+            "success"
+        );
+
+
+        success.style.display =
+            "block";
+
+
+        /*
+         * Automatically download image
+         */
+
+        downloadBlob(
+            blob,
+            "encoded.png"
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        setStatus(
+            status,
+            error.message ||
+            "Encryption failed.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   DOWNLOAD GENERATED KEY
+============================================================ */
+
+function downloadKey() {
+
+    if (!generatedKey) {
+
+        alert(
+            "No encryption key is available."
+        );
+
+        return;
+
+    }
+
+
+    const blob =
+        new Blob(
+            [generatedKey],
+            {
+                type: "text/plain"
+            }
+        );
+
+
+    downloadBlob(
+        blob,
+        "encryption_key.txt"
+    );
+
+}
+
+
+/* ============================================================
+   DOWNLOAD BLOB
+============================================================ */
+
+function downloadBlob(blob, filename) {
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const a =
+        document.createElement("a");
+
+    a.href =
+        url;
+
+    a.download =
+        filename;
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    a.remove();
+
+    setTimeout(
+        () => URL.revokeObjectURL(url),
+        1000
+    );
+
+}
+
+
+/* ============================================================
+   DECRYPT MESSAGE
+============================================================ */
+
+async function decryptMessage() {
+
+    const file =
+        document.getElementById(
+            "decryptImage"
+        ).files[0];
+
+
+    const keyText =
+        document.getElementById(
+            "encryptionKey"
+        ).value.trim();
+
+
+    const status =
+        document.getElementById(
+            "decryptStatus"
+        );
+
+
+    const result =
+        document.getElementById(
+            "decryptedMessage"
+        );
+
+
+    result.value = "";
+
+
+    if (!file) {
+
+        setStatus(
+            status,
+            "Please select the encoded image.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (!keyText) {
+
+        setStatus(
+            status,
+            "Please enter the encryption key.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        setStatus(
+            status,
+            "Extracting hidden message...",
+            ""
+        );
+
+
+        /*
+         * Import AES key
+         */
+
+        const key =
+            await importAESKey(
+                keyText
+            );
+
+
+        /*
+         * Load image
+         */
+
+        const image =
+            await loadImageData(file);
+
+
+        /*
+         * First extract:
+         *
+         * 4 bytes MAGIC
+         * 4 bytes LENGTH
+         */
+
+        const header =
+            extractBits(
+                image.imageData,
+                8
+            );
+
+
+        const magic =
+            new TextDecoder().decode(
+                header.slice(0, 4)
+            );
+
+
+        if (
+            magic !== "STEG"
+        ) {
+
+            throw new Error(
+                "This image does not contain valid hidden data."
+            );
+
+        }
+
+
+        /*
+         * Get encrypted length
+         */
+
+        const encryptedLength =
+            bytesToNumber(
+                header.slice(4, 8)
+            );
+
+        const maximumEncryptedLength =
+            Math.floor(
+                image.imageData.data.length * 0.75 / 8
+            ) - 8;
+
+        if (
+            encryptedLength < 28 ||
+            encryptedLength > maximumEncryptedLength
+        ) {
+            throw new Error(
+                "The image contains an invalid hidden message length."
+            );
+        }
+
+
+        if (
+            encryptedLength <= 0
+        ) {
+
+            throw new Error(
+                "No hidden message was found."
+            );
+
+        }
+
+
+        /*
+         * Extract encrypted data
+         */
+
+        const totalBytes =
+            8 +
+            encryptedLength;
+
+
+        const allData =
+            extractBits(
+                image.imageData,
+                totalBytes
+            );
+
+
+        const encrypted =
+            allData.slice(
+                8
+            );
+
+
+        /*
+         * Decrypt
+         */
+
+        const message =
+            await decryptText(
+                encrypted,
+                key
+            );
+
+
+        /*
+         * Display
+         */
+
+        result.value =
+            message;
+
+
+        setStatus(
+            status,
+            "Done — hidden message extracted successfully.",
+            "success"
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        setStatus(
+            status,
+            "Decryption failed: " +
+            (
+                error.message ||
+                "Invalid key or corrupted image."
+            ),
+            "error"
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   KEY FILE LOADING
+============================================================ */
+
+document
+.getElementById("keyFile")
+.addEventListener(
+    "change",
+    function() {
+
+        const file =
+            this.files[0];
+
+        if (!file) return;
+
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            function() {
+
+                document.getElementById(
+                    "encryptionKey"
+                ).value =
+                    reader.result.trim();
+
+            };
+
+
+        reader.readAsText(file);
+
+    }
+);
+
+
+/* ============================================================
+   COPY DECRYPTED MESSAGE
+============================================================ */
+
+async function copyMessage() {
+
+    const text =
+        document.getElementById(
+            "decryptedMessage"
+        ).value;
+
+
+    if (!text) {
+
+        alert(
+            "There is no decrypted message to copy."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        await navigator.clipboard.writeText(
+            text
+        );
+
+        alert(
+            "Message copied successfully!"
+        );
+
+    } catch {
+
+        alert(
+            "Could not copy the message."
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   STATUS HELPER
+============================================================ */
+
+function setStatus(
+    element,
+    message,
+    type
+) {
+
+    element.textContent =
+        message;
+
+
+    element.classList.remove(
+        "error",
+        "success"
+    );
+
+
+    if (type === "error") {
+
+        element.classList.add(
+            "error"
+        );
+
+    }
+
+
+    if (type === "success") {
+
+        element.classList.add(
+            "success"
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   INITIAL STATE
+============================================================ */
+
+document
+.getElementById("encryptPage")
+.style.display = "none";
+
+
+document
+.getElementById("decryptPage")
+.style.display = "none";
+
+</script>
+
+</body>
+</html>
